@@ -80,7 +80,7 @@ const server = createServer(async (req, res) => {
     if (url.pathname === '/v1/reports/weekly' && req.method === 'GET') {
       if (!bearerMatches(req.headers.authorization, adminToken)) return json(res, 401, { error: 'unauthorized' })
       const site = url.searchParams.get('site') || ''
-      if (site && !['rimivo', 'e-massa'].includes(site)) return json(res, 400, { error: 'invalid site' })
+      if (site && !['rimivo', 'e-massa', 'entregamanager'].includes(site)) return json(res, 400, { error: 'invalid site' })
       return json(res, 200, weeklyReport(db, site, Number(url.searchParams.get('days') || 7)))
     }
     if (url.pathname === '/v1/admin/leads' && req.method === 'GET') {
