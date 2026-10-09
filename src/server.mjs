@@ -7,6 +7,14 @@ const db = openDatabase(process.env.INSIGHTS_DB_PATH || './data/insights.db')
 const hashSecret = process.env.INSIGHTS_HASH_SECRET || ''
 const adminToken = process.env.INSIGHTS_ADMIN_TOKEN || ''
 const allowedOrigins = new Set((process.env.INSIGHTS_ALLOWED_ORIGINS || '').split(',').map((v) => v.trim()).filter(Boolean))
+// Domínios oficiais adicionais, sem substituir as origens já configuradas no Render.
+// Nunca liberar apps operacionais, subdomínios de clientes ou coringas aqui.
+for (const origin of [
+  'https://emassadelivery.com.br',
+  'https://www.emassadelivery.com.br',
+  'https://entregamanager.com.br',
+  'https://www.entregamanager.com.br',
+]) allowedOrigins.add(origin)
 const buckets = new Map()
 const eventRetentionDays = Math.max(30, Number(process.env.INSIGHTS_EVENT_RETENTION_DAYS || 400))
 const leadRetentionDays = Math.max(30, Number(process.env.INSIGHTS_LEAD_RETENTION_DAYS || 730))
@@ -80,7 +88,7 @@ const server = createServer(async (req, res) => {
     if (url.pathname === '/v1/reports/weekly' && req.method === 'GET') {
       if (!bearerMatches(req.headers.authorization, adminToken)) return json(res, 401, { error: 'unauthorized' })
       const site = url.searchParams.get('site') || ''
-      if (site && !['rimivo', 'e-massa'].includes(site)) return json(res, 400, { error: 'invalid site' })
+      if (site && !['rimivo', 'e-massa', 'entregamanager'].includes(site)) return json(res, 400, { error: 'invalid site' })
       return json(res, 200, weeklyReport(db, site, Number(url.searchParams.get('days') || 7)))
     }
     if (url.pathname === '/v1/admin/leads' && req.method === 'GET') {

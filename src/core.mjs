@@ -2,7 +2,7 @@ import { createHmac, timingSafeEqual } from 'node:crypto'
 
 const MAX = { site: 32, path: 240, event: 48, source: 120, name: 120, phone: 32, email: 180, product: 80, message: 1200 }
 const EVENT_TYPES = new Set(['page_view', 'heartbeat', 'click_contact', 'click_price', 'lead_prompt_view', 'lead_prompt_dismiss'])
-const SITES = new Set(['rimivo', 'e-massa'])
+const SITES = new Set(['rimivo', 'e-massa', 'entregamanager'])
 
 export function cleanText(value, limit) {
   if (typeof value !== 'string') return ''
