@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: rimivo-insights
+    runtime: node
+    plan: starter
+    region: oregon
+    branch: main
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeployTrigger: off
+    disk:
+      name: rimivo-insights-data
+      mountPath: /var/data/rimivo-insights
+      sizeGB: 1
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      - key: INSIGHTS_DB_PATH
+        value: /var/data/rimivo-insights/insights.db
+      - key: INSIGHTS_HASH_SECRET
+        generateValue: true
+      - key: INSIGHTS_ADMIN_TOKEN
+        generateValue: true
+      - key: INSIGHTS_ALLOWED_ORIGINS
+        value: https://rimivo.com.br,https://www.rimivo.com.br,https://rimivo.onrender.com
+      - key: INSIGHTS_EVENT_RETENTION_DAYS
+        value: "400"
+      - key: INSIGHTS_LEAD_RETENTION_DAYS
+        value: "730"
