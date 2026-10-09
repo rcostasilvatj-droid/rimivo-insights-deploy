@@ -7,6 +7,14 @@ const db = openDatabase(process.env.INSIGHTS_DB_PATH || './data/insights.db')
 const hashSecret = process.env.INSIGHTS_HASH_SECRET || ''
 const adminToken = process.env.INSIGHTS_ADMIN_TOKEN || ''
 const allowedOrigins = new Set((process.env.INSIGHTS_ALLOWED_ORIGINS || '').split(',').map((v) => v.trim()).filter(Boolean))
+// Domínios oficiais adicionais, sem substituir as origens já configuradas no Render.
+// Nunca liberar apps operacionais, subdomínios de clientes ou coringas aqui.
+for (const origin of [
+  'https://emassadelivery.com.br',
+  'https://www.emassadelivery.com.br',
+  'https://entregamanager.com.br',
+  'https://www.entregamanager.com.br',
+]) allowedOrigins.add(origin)
 const buckets = new Map()
 const eventRetentionDays = Math.max(30, Number(process.env.INSIGHTS_EVENT_RETENTION_DAYS || 400))
 const leadRetentionDays = Math.max(30, Number(process.env.INSIGHTS_LEAD_RETENTION_DAYS || 730))
